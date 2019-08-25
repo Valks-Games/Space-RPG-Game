@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-public class ProceduralCube : MonoBehaviour
+public class VoxelRender : MonoBehaviour
 {
     private Mesh mesh;
 
@@ -11,7 +11,6 @@ public class ProceduralCube : MonoBehaviour
     private List<int> triangles;
 
     public float scale = 1.0f;
-    public int posX, posY, posZ;
 
     private float adjScale;
 
@@ -23,21 +22,38 @@ public class ProceduralCube : MonoBehaviour
 
     public void Start()
     {
-        CreateCube(adjScale, new Vector3(posX * scale, posY * scale, posZ * scale));
+        GenerateVoxelMesh( new VoxelData() );
     }
 
-    public void CreateCube(float cubeScale, Vector3 cubePos) {
+    public void GenerateVoxelMesh(VoxelData data) {
         vertices = new List<Vector3>();
         triangles = new List<int>();
 
-        for (int i = 0; i < 6; i++) {
-            CreateFace(i, cubeScale, cubePos);
+        for (int x = 0; x < data.Depth; x++) {
+            for (int z = 0; z < data.Width; z++) {
+                if (data.GetCell(x, z) == 0) {
+                    continue;
+                }
+
+                CreateCube(adjScale, new Vector3(x * scale, 0, z * scale), x, z, data);
+            }
+        }
+    }
+
+    public void CreateCube(float cubeScale, Vector3 cubePos, int x, int z, VoxelData data)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (data.GetNeighbor(x, z, (Direction)i) == 0) {
+                CreateFace((Direction)i, cubeScale, cubePos);
+            }
         }
 
         UpdateMesh();
     }
 
-    private void CreateFace(int dir, float faceScale, Vector3 facePos) {
+    private void CreateFace(Direction dir, float faceScale, Vector3 facePos)
+    {
         vertices.AddRange(CubeMeshData.faceVertices(dir, faceScale, facePos));
 
         int vCount = vertices.Count;

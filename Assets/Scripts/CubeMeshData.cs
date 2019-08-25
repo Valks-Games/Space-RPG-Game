@@ -2,20 +2,16 @@
 
 public static class CubeMeshData
 {
-    public static Vector3[] vertices(float vertexOffset) {
-        Vector3[] vertices = {
-            new Vector3( vertexOffset,   vertexOffset,   vertexOffset),
-            new Vector3(-vertexOffset,   vertexOffset,   vertexOffset),
-            new Vector3(-vertexOffset,  -vertexOffset,   vertexOffset),
-            new Vector3( vertexOffset,  -vertexOffset,   vertexOffset),
-            new Vector3(-vertexOffset,   vertexOffset,  -vertexOffset),
-            new Vector3( vertexOffset,   vertexOffset,  -vertexOffset),
-            new Vector3( vertexOffset,  -vertexOffset,  -vertexOffset),
-            new Vector3(-vertexOffset,  -vertexOffset,  -vertexOffset)
-        };
-
-        return vertices;
-    }
+    public static Vector3[] vertices = {
+        new Vector3( 1,   1,   1),
+        new Vector3(-1,   1,   1),
+        new Vector3(-1,  -1,   1),
+        new Vector3( 1,  -1,   1),
+        new Vector3(-1,   1,  -1),
+        new Vector3( 1,   1,  -1),
+        new Vector3( 1,  -1,  -1),
+        new Vector3(-1,  -1,  -1)
+    };
 
     public static int[][] faceTriangles = {
         new int[]{ 0, 1, 2, 3 },
@@ -26,12 +22,16 @@ public static class CubeMeshData
         new int[]{ 3, 2, 7, 6 }
     };
 
-    public static Vector3[] faceVertices(int dir, float vertexOffset) {
+    public static Vector3[] faceVertices(int dir, float scale, Vector3 pos) {
         Vector3[] faceVector = new Vector3[4];
         for (int i = 0; i < faceVector.Length; i++) {
-            Vector3[] verts = vertices(vertexOffset);
-            faceVector[i] = verts[faceTriangles[dir][i]];
+            faceVector[i] = (vertices[faceTriangles[dir][i]] * scale) + pos;
         }
         return faceVector;
+    }
+
+    public static Vector3[] faceVertices(Direction dir, float scale, Vector3 pos)
+    {
+        return faceVertices((int) dir, scale, pos);
     }
 }

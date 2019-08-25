@@ -21,7 +21,12 @@ public class ProceduralCubeGrid : MonoBehaviour
 
     void Start()
     {
-        MakeDiscreteProceduralCubeGrid();
+        Test();
+        //MakeDiscreteProceduralCubeGrid();
+    }
+
+    void Test() {
+        ProceduralCube cube = gameObject.AddComponent<ProceduralCube>();
     }
 
     void MakeDiscreteProceduralCubeGrid()
@@ -39,7 +44,7 @@ public class ProceduralCubeGrid : MonoBehaviour
 
                 GameObject cubeObject = new GameObject();
                 ProceduralCube cube = cubeObject.AddComponent<ProceduralCube>();
-                cube.CreateCube(vertexOffset);
+                //cube.CreateCube(cube.scale * 0.5f);
                 cubeObject.transform.position = cellOffset;
             }
         }
