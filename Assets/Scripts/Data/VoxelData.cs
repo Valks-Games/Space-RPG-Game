@@ -5,25 +5,27 @@ using UnityEngine;
 public class VoxelData
 {
     // int[,] data = new int[,] { {0, 1, 1}, {1, 1, 1}, {1, 1, 0} };
-    const int Size = 50;
-    int[,] data = new int[Size, Size];
+    const int Size = 20;
+    int[,,] data = new int[Size, 1, Size];
 
     public VoxelData() {
         for (int x = 0; x < data.GetLength(0); x++) {
-            for (int z = 0; z < data.GetLength(1); z++) {
-
-                float frequency = 4f;
-
-                float noise = Mathf.PerlinNoise(x / (float) Size * frequency, z / (float) Size * frequency);
-
-                if (noise < 0.5)
+            for (int y = 0; y < data.GetLength(1); y++) {
+                for (int z = 0; z < data.GetLength(2); z++)
                 {
-                    data[x, z] = 1;
+
+                    float frequency = 4f;
+
+                    float noise = Mathf.PerlinNoise(x / (float) Size * frequency, z / (float) Size * frequency);
+
+                    if (noise < 0.5)
+                    {
+                        data[x, y, z] = 1;
+                    }
+                    else {
+                        data[x, y, z] = 0;
+                    }
                 }
-                else {
-                    data[x, z] = 0;
-                }
-                
             }
         }
     }
@@ -32,24 +34,29 @@ public class VoxelData
         get { return data.GetLength(0); }
     }
 
-    public int Depth {
+    public int Height {
         get { return data.GetLength(1); }
     }
 
-    public int GetCell(int x, int z) {
-        return data[x, z];
+    public int Depth
+    {
+        get { return data.GetLength(2); }
     }
 
-    public int GetNeighbor(int x, int z, Direction dir) {
-        DataCoordinate offset = offsets[(int) dir]; // The offset to check.
-        DataCoordinate neighborCoord = new DataCoordinate(x + offset.x, 0 + offset.y, z + offset.z);
+    public int GetCell(int x, int y, int z) {
+        return data[x, y, z];
+    }
 
-        if (neighborCoord.x < 0 || neighborCoord.x >= Width || neighborCoord.y != 0 || neighborCoord.z < 0 || neighborCoord.z >= Depth)
+    public int GetNeighbor(int x, int y, int z, Direction dir) {
+        DataCoordinate offset = offsets[(int) dir]; // The offset to check.
+        DataCoordinate neighborCoord = new DataCoordinate(x + offset.x, y + offset.y, z + offset.z);
+
+        if (neighborCoord.x < 0 || neighborCoord.x >= Width || neighborCoord.y < 0 || neighborCoord.y >= Height || neighborCoord.z < 0 || neighborCoord.z >= Depth)
         {
             return 0;
         }
         else {
-            return GetCell(neighborCoord.x, neighborCoord.z);
+            return GetCell(neighborCoord.x, neighborCoord.y, neighborCoord.z);
         }
     }
 

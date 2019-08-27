@@ -23,6 +23,10 @@ public class VoxelRender : MonoBehaviour
     public void Start()
     {
         GenerateVoxelMesh( new VoxelData() );
+        MeshCollider collider = gameObject.AddComponent<MeshCollider>();
+        collider.convex = false;
+
+        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     public void GenerateVoxelMesh(VoxelData data) {
@@ -30,21 +34,25 @@ public class VoxelRender : MonoBehaviour
         triangles = new List<int>();
 
         for (int x = 0; x < data.Depth; x++) {
-            for (int z = 0; z < data.Width; z++) {
-                if (data.GetCell(x, z) == 0) {
-                    continue;
-                }
+            for (int y = 0; y < data.Height; y++) {
+                for (int z = 0; z < data.Width; z++)
+                {
+                    if (data.GetCell(x, y, z) == 0)
+                    {
+                        continue;
+                    }
 
-                CreateCube(adjScale, new Vector3(x * scale, 0, z * scale), x, z, data);
+                    CreateCube(adjScale, new Vector3(x * scale, y * scale, z * scale), x, y, z, data);
+                }
             }
         }
     }
 
-    public void CreateCube(float cubeScale, Vector3 cubePos, int x, int z, VoxelData data)
+    public void CreateCube(float cubeScale, Vector3 cubePos, int x, int y, int z, VoxelData data)
     {
         for (int i = 0; i < 6; i++)
         {
-            if (data.GetNeighbor(x, z, (Direction)i) == 0) {
+            if (data.GetNeighbor(x, y, z, (Direction)i) == 0) {
                 CreateFace((Direction)i, cubeScale, cubePos);
             }
         }
