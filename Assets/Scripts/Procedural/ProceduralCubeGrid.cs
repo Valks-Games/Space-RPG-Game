@@ -5,31 +5,30 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class ProceduralCubeGrid : MonoBehaviour
 {
-    Mesh mesh;
-
-    Vector3[] vertices;
-    int[] triangles;
-
-    public float cellSize = 1;
     public Vector3 gridOffset;
+    public float cellSize = 1;
     public int gridSize = 10;
 
-    void Awake()
+    private Vector3[] vertices;
+    private Mesh mesh;
+    private int[] triangles;
+
+    private void Awake()
     {
         mesh = GetComponent<MeshFilter>().mesh;
     }
 
-    void Start()
+    private void Start()
     {
         Test();
         //MakeDiscreteProceduralCubeGrid();
     }
 
-    void Test() {
+    private void Test() {
         ProceduralCube cube = gameObject.AddComponent<ProceduralCube>();
     }
 
-    void MakeDiscreteProceduralCubeGrid()
+    public void MakeDiscreteProceduralCubeGrid()
     {
         vertices = new Vector3[gridSize * gridSize * 4];
         triangles = new int[gridSize * gridSize * 6];

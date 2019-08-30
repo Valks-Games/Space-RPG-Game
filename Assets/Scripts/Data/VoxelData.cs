@@ -1,40 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 public class VoxelData
 {
-    // int[,] data = new int[,] { {0, 1, 1}, {1, 1, 1}, {1, 1, 0} };
-    const int Size = 20;
-    int[,,] data = new int[Size, 1, Size];
+    private int[,,] data;
+    private int world_height = 64;
 
-    public VoxelData() {
-        for (int x = 0; x < data.GetLength(0); x++) {
-            for (int y = 0; y < data.GetLength(1); y++) {
-                for (int z = 0; z < data.GetLength(2); z++)
-                {
+    public VoxelData(int chunk_x, int chunk_z, int chunk_size, int world_size, float frequency, int seed) {
+        ChunkX = chunk_x;
+        ChunkZ = chunk_z;
 
-                    float frequency = 4f;
+        data = new int[world_size, world_height, world_size];
 
-                    float noise = Mathf.PerlinNoise(x / (float) Size * frequency, z / (float) Size * frequency);
+        GameObject world_game_object = GameObject.Find("World");
+        World world_script = world_game_object.GetComponent<World>();
 
-                    if (noise < 0.5)
-                    {
-                        data[x, y, z] = 1;
-                    }
-                    else {
-                        data[x, y, z] = 0;
-                    }
+        float[,] noise = world_script.GetWorldNoise();
+
+        for (int x = chunk_size * chunk_x; x < chunk_size * (chunk_x + 1); x++) {
+            for (int z = chunk_size * chunk_z; z < chunk_size * (chunk_z + 1); z++)
+            {
+                int elevation = (int) (noise[x,z] * chunk_size);
+                data[x, elevation, z] = 1;
+
+                for (int y = 0; y < elevation; y++) {
+                    data[x, y, z] = 1;
                 }
             }
         }
     }
 
-    public int Width {
+    public int ChunkX { get; }
+
+    public int ChunkZ { get; }
+
+    public int Width
+    {
         get { return data.GetLength(0); }
     }
 
-    public int Height {
+    public int Height
+    {
         get { return data.GetLength(1); }
     }
 
@@ -43,7 +51,8 @@ public class VoxelData
         get { return data.GetLength(2); }
     }
 
-    public int GetCell(int x, int y, int z) {
+    public int GetCell(int x, int y, int z)
+    {
         return data[x, y, z];
     }
 

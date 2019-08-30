@@ -5,25 +5,27 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class ProceduralCube : MonoBehaviour
 {
+    public float scale = 1.0f;
+    public int posX, posY, posZ;
+
     private Mesh mesh;
 
     private List<Vector3> vertices;
     private List<int> triangles;
 
-    public float scale = 1.0f;
-    public int posX, posY, posZ;
-
-    private float adjScale;
-
     private void Awake()
     {
         mesh = GetComponent<MeshFilter>().mesh;
-        adjScale = scale * 0.5f;
+        //adjScale = scale * 0.5f;
     }
 
-    public void Start()
+    private void Start()
     {
-        CreateCube(adjScale, new Vector3(posX * scale, posY * scale, posZ * scale));
+        // CreateCube(scale * 0.5f, new Vector3(posX * scale, posY * scale, posZ * scale));
+    }
+
+    public void CreateCube(float scale) {
+        CreateCube(scale * 0.5f, new Vector3(posX * scale, posY * scale, posZ * scale));
     }
 
     public void CreateCube(float cubeScale, Vector3 cubePos) {

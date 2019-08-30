@@ -14,18 +14,18 @@ public class ProceduralGrid : MonoBehaviour
     public Vector3 gridOffset;
     public int gridSize = 10;
 
-    void Awake()
+    private void Awake()
     {
         mesh = GetComponent<MeshFilter>().mesh;
     }
 
-    void Start()
+    private void Start()
     {
         MakeDiscreteProceduralGrid(); // Discrete means no 2 vertices are sharing, this allows for sharp edges.
         UpdateMesh();
     }
 
-    void MakeDiscreteProceduralGrid() {
+    public void MakeDiscreteProceduralGrid() {
         vertices = new Vector3[gridSize * gridSize * 4];
         triangles = new int[gridSize * gridSize * 6];
 
@@ -54,7 +54,7 @@ public class ProceduralGrid : MonoBehaviour
         }
     }
 
-    void UpdateMesh() {
+    private void UpdateMesh() {
         mesh.Clear();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
