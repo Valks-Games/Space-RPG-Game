@@ -1,21 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class Player : MonoBehaviour
 {
-    public float speed = 1f;
-    public float jumpForce = 500f;
+    public float Speed = 1f;
+    public float JumpForce = 500f;
 
-    private MeshRenderer meshRenderer;
-    private Rigidbody rb;
-    private float adjSpeed;
-    private bool jump;
+    private MeshRenderer _meshRenderer;
+    private Rigidbody _rb;
+    private float _adjSpeed;
+    private bool _jump;
 
     private void Awake()
     {
-        adjSpeed = speed * 1000f;
+        _adjSpeed = Speed * 1000f;
     }
 
     private void Start()
@@ -27,8 +25,8 @@ public class Player : MonoBehaviour
     }
 
     private void InitMeshRenderer() {
-        meshRenderer = GetComponent<MeshRenderer>();
-        meshRenderer.material = (Material)Resources.Load("Materials/Player");
+        _meshRenderer = GetComponent<MeshRenderer>();
+        _meshRenderer.material = (Material)Resources.Load("Materials/Player");
     }
 
     private void InitPlayerObject() {
@@ -42,16 +40,16 @@ public class Player : MonoBehaviour
     }
 
     private void InitRigidBody() {
-        rb = gameObject.AddComponent<Rigidbody>();
-        rb.useGravity = true;
-        rb.freezeRotation = true;
-        rb.drag = 1f;
+        _rb = gameObject.AddComponent<Rigidbody>();
+        _rb.useGravity = true;
+        _rb.freezeRotation = true;
+        _rb.drag = 1f;
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
-            jump = true;
+            _jump = true;
     }
 
     private void FixedUpdate()
@@ -59,15 +57,15 @@ public class Player : MonoBehaviour
         float moveHorz = Input.GetAxis("Horizontal");
         float moveVert = Input.GetAxis("Vertical");
 
-        Vector3 moveForce = new Vector3(moveHorz * adjSpeed * Time.deltaTime, 0, moveVert * adjSpeed * Time.deltaTime);
+        Vector3 moveForce = new Vector3(moveHorz * _adjSpeed * Time.deltaTime, 0, moveVert * _adjSpeed * Time.deltaTime);
 
-        rb.AddForce(moveForce);
+        _rb.AddForce(moveForce);
 
-        if (jump)
+        if (_jump)
         {
             if (IsGrounded())
-                rb.AddForce(new Vector3(0, jumpForce, 0));
-            jump = false;
+                _rb.AddForce(new Vector3(0, JumpForce, 0));
+            _jump = false;
         }
     }
 

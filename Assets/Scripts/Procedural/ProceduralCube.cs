@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class ProceduralCube : MonoBehaviour
 {
-    public float scale = 1.0f;
-    public int posX, posY, posZ;
+    public int PosX, PosY, PosZ;
 
     private Mesh mesh;
 
@@ -21,11 +19,11 @@ public class ProceduralCube : MonoBehaviour
 
     private void Start()
     {
-        // CreateCube(scale * 0.5f, new Vector3(posX * scale, posY * scale, posZ * scale));
+        
     }
 
     public void CreateCube(float scale) {
-        CreateCube(scale * 0.5f, new Vector3(posX * scale, posY * scale, posZ * scale));
+        CreateCube(scale * 0.5f, new Vector3(PosX * scale, PosY * scale, PosZ * scale));
     }
 
     public void CreateCube(float cubeScale, Vector3 cubePos) {
@@ -40,7 +38,7 @@ public class ProceduralCube : MonoBehaviour
     }
 
     private void CreateFace(int dir, float faceScale, Vector3 facePos) {
-        vertices.AddRange(CubeMeshData.faceVertices(dir, faceScale, facePos));
+        vertices.AddRange(CubeMeshData.FaceVertices(dir, faceScale, facePos));
 
         int vCount = vertices.Count;
 

@@ -1,21 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class ProceduralCubeGrid : MonoBehaviour
 {
-    public Vector3 gridOffset;
-    public float cellSize = 1;
-    public int gridSize = 10;
+    public Vector3 GridOffset;
+    public float CellSize = 1;
+    public int GridSize = 10;
 
-    private Vector3[] vertices;
-    private Mesh mesh;
-    private int[] triangles;
+    private Vector3[] _vertices;
+    private Mesh _mesh;
+    private int[] _triangles;
 
     private void Awake()
     {
-        mesh = GetComponent<MeshFilter>().mesh;
+        _mesh = GetComponent<MeshFilter>().mesh;
     }
 
     private void Start()
@@ -30,16 +28,16 @@ public class ProceduralCubeGrid : MonoBehaviour
 
     public void MakeDiscreteProceduralCubeGrid()
     {
-        vertices = new Vector3[gridSize * gridSize * 4];
-        triangles = new int[gridSize * gridSize * 6];
+        _vertices = new Vector3[GridSize * GridSize * 4];
+        _triangles = new int[GridSize * GridSize * 6];
 
-        float vertexOffset = cellSize * 0.5f; // Multiplication is not as intensive as division.
+        float vertexOffset = CellSize * 0.5f; // Multiplication is not as intensive as division.
 
-        for (int x = 0; x < gridSize; x++)
+        for (int x = 0; x < GridSize; x++)
         {
-            for (int z = 0; z < gridSize; z++)
+            for (int z = 0; z < GridSize; z++)
             {
-                Vector3 cellOffset = new Vector3(x * cellSize, x + z, z * cellSize);
+                Vector3 cellOffset = new Vector3(x * CellSize, x + z, z * CellSize);
 
                 GameObject cubeObject = new GameObject();
                 ProceduralCube cube = cubeObject.AddComponent<ProceduralCube>();

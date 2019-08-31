@@ -2,16 +2,11 @@
 
 public class PlayerSettings : MonoBehaviour
 {
-    public int frameRate = 60;
+    public int FrameRate = 60;
 
     private void Start()
     {
         QualitySettings.vSyncCount = 1;
-        Application.targetFrameRate = frameRate;
-    }
-
-    private void Update()
-    {
-        
+        Application.targetFrameRate = FrameRate;
     }
 }

@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class DebugManager : MonoBehaviour
 {
-    public bool useSceneView = false;
+    public bool UseSceneView = false;
 
     // Start is called before the first frame update
     private void Awake()
     {
-        if (useSceneView)
-        {
+        if (UseSceneView)
             UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView));
-        }
     }
 }
 #endif

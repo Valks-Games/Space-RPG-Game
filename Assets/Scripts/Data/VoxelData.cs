@@ -1,32 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Profiling;
+﻿using UnityEngine;
 
 public class VoxelData
 {
-    private int[,,] data;
-    private int world_height = 64;
+    private int[,,] _data;
+    private int _world_height = 64;
 
-    public VoxelData(int chunk_x, int chunk_z, int chunk_size, int world_size, float frequency, int seed) {
-        ChunkX = chunk_x;
-        ChunkZ = chunk_z;
+    public VoxelData(int chunkX, int chunkZ, int chunkSize, int worldSize) {
+        ChunkX = chunkX;
+        ChunkZ = chunkZ;
 
-        data = new int[world_size, world_height, world_size];
+        _data = new int[worldSize, _world_height, worldSize];
 
         GameObject world_game_object = GameObject.Find("World");
         World world_script = world_game_object.GetComponent<World>();
 
         float[,] noise = world_script.GetWorldNoise();
 
-        for (int x = chunk_size * chunk_x; x < chunk_size * (chunk_x + 1); x++) {
-            for (int z = chunk_size * chunk_z; z < chunk_size * (chunk_z + 1); z++)
+        for (int x = chunkSize * chunkX; x < chunkSize * (chunkX + 1); x++) {
+            for (int z = chunkSize * chunkZ; z < chunkSize * (chunkZ + 1); z++)
             {
-                int elevation = (int) (noise[x,z] * chunk_size);
-                data[x, elevation, z] = 1;
+                if (x < 0 || z < 0 || x > noise.GetLength(0) || z > noise.GetLength(1))
+                    continue;
+
+                int elevation = (int) (noise[x,z] * chunkSize);
+                _data[x, elevation, z] = 1;
 
                 for (int y = 0; y < elevation; y++) {
-                    data[x, y, z] = 1;
+                    _data[x, y, z] = 1;
                 }
             }
         }
@@ -38,22 +38,25 @@ public class VoxelData
 
     public int Width
     {
-        get { return data.GetLength(0); }
+        get { return _data.GetLength(0); }
     }
 
     public int Height
     {
-        get { return data.GetLength(1); }
+        get { return _data.GetLength(1); }
     }
 
     public int Depth
     {
-        get { return data.GetLength(2); }
+        get { return _data.GetLength(2); }
     }
 
     public int GetCell(int x, int y, int z)
     {
-        return data[x, y, z];
+        if (x < 0 || z < 0 || x > Width || z > Depth)
+            return 0;
+
+        return _data[x, y, z];
     }
 
     public int GetNeighbor(int x, int y, int z, Direction dir) {

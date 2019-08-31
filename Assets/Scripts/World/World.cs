@@ -1,35 +1,91 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class World : MonoBehaviour
 {
-    public int chunk_x = 0;
-    public int chunk_z = 0;
-    public int world_size = 20;
-    public float frequency = 4f;
-    public float amplitude = 2f;
-    public float lacunarity = 0.6f;
-    public float persistance = 0.6f;
-    public int octaves = 1;
-    public string seed = "cat";
+    public int ChunkX = 0;
+    public int ChunkZ = 0;
+    public int WorldSize = 20;
+    public int NoiseSize = 20;
+    public float Frequency = 4f;
+    public float Amplitude = 2f;
+    public float Lacunarity = 0.6f;
+    public float Persistance = 0.6f;
+    public int Octaves = 1;
+    public string Seed = "cat";
 
-    public GameObject player;
+    private int _chunkSize = 10;
+    private float _scale = 1.0f;
 
-    private float[,] world_noise;
+    public GameObject Player;
 
-    public void Start()
+    private float[,] _worldNoise;
+
+    public void Awake()
     {
         GenerateWorldNoise();
+        // GenerateSpawn(3, 3);
+        SpawnPlayer(true);
+    }
+
+    private void GenerateSpawn(int width, int length) {
+        for (int x = 0; x < width; x++) {
+            for (int z = 0; z < length; z++) {
+                GameObject chunk = new GameObject("Chunk " + x + " " + z);
+                RenderChunk renderChunk = chunk.AddComponent<RenderChunk>();
+                renderChunk.Render(x, z);
+            }
+        }
     }
 
     public float[,] GetWorldNoise() {
-        return world_noise;
+        return _worldNoise;
+    }
+
+    public int GetChunkSize() {
+        return _chunkSize;
+    }
+
+    public float GetScale() {
+        return _scale;
     }
 
     private void GenerateWorldNoise()
     {
-        NoiseData noiseData = new NoiseData(seed.GetHashCode(), frequency, amplitude, lacunarity, persistance, octaves);
-        world_noise = noiseData.GetNoiseValues(world_size, world_size);
+        NoiseData noiseData = new NoiseData(Seed.GetHashCode(), Frequency, Amplitude, Lacunarity, Persistance, Octaves);
+        _worldNoise = noiseData.GetNoiseValues(WorldSize, NoiseSize);
+    }
+
+    private void SpawnPlayer(bool checkDupe)
+    {
+        if (Player)
+        {
+            Destroy(Player);
+            SpawnPlayer();
+        }
+        else
+        {
+            SpawnPlayer();
+        }
+    }
+
+    private void SpawnPlayer()
+    {
+        // Create and spawn the player.
+        GameObject playerPrefab = (GameObject)Resources.Load("Prefabs/Player");
+        Player = Instantiate(playerPrefab, new Vector3(10, 21, 10), Quaternion.identity);
+
+        InitPlayerCamera();
+    }
+
+    private void InitPlayerCamera()
+    {
+        // Create and attach the camera component.
+        GameObject camObject = new GameObject("Camera");
+        Camera camera = camObject.AddComponent<Camera>();
+        Transform cameraTransform = camera.transform;
+        Vector3 offset = Player.transform.position;
+        cameraTransform.Translate(offset + new Vector3(0, 25, 0));
+        cameraTransform.Rotate(new Vector3(90, 0, 0));
+        camObject.transform.parent = Player.transform;
     }
 }
