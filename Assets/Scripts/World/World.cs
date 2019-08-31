@@ -13,7 +13,7 @@ public class World : MonoBehaviour
     public int Octaves = 1;
     public string Seed = "cat";
 
-    private int _chunkSize = 10;
+    private int _chunkSize = 16;
     private float _scale = 1.0f;
 
     public GameObject Player;
@@ -23,7 +23,7 @@ public class World : MonoBehaviour
     public void Awake()
     {
         GenerateWorldNoise();
-        // GenerateSpawn(3, 3);
+        // GenerateSpawn(2, 2);
         SpawnPlayer(true);
     }
 
@@ -31,6 +31,8 @@ public class World : MonoBehaviour
         for (int x = 0; x < width; x++) {
             for (int z = 0; z < length; z++) {
                 GameObject chunk = new GameObject("Chunk " + x + " " + z);
+                chunk.transform.parent = gameObject.transform;
+                chunk.transform.position = new Vector3(x * _chunkSize, 0, z * _chunkSize);
                 RenderChunk renderChunk = chunk.AddComponent<RenderChunk>();
                 renderChunk.Render(x, z);
             }

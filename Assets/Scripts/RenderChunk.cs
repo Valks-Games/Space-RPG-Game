@@ -74,27 +74,30 @@ public class RenderChunk : MonoBehaviour
                     if (data.GetCell(x, y, z) == 0)
                         continue;
 
-                    CreateCube(_adjScale, chunkX, chunkZ, new Vector3(x * _scale, y * _scale, z * _scale), x, y, z, data);
+                    int renderOffsetX = chunkX * _chunkSize;
+                    int renderOffsetZ = chunkZ * _chunkSize;
+
+                    CreateCube(_adjScale, new Vector3(x * _scale - renderOffsetX, y * _scale, z * _scale - renderOffsetZ), x, y, z, data);
                 }
             }
         }
 
-        UpdateMesh(chunkX, chunkZ);
+        UpdateMesh();
     }
 
-    public void CreateCube(float cubeScale, int chunkX, int chunkZ, Vector3 cubePos, int x, int y, int z, VoxelData data)
+    public void CreateCube(float cubeScale, Vector3 cubePos, int x, int y, int z, VoxelData data)
     {
         for (int i = 0; i < 6; i++)
         {
             if (data.GetNeighbor(x, y, z, (Direction)i) == 0) {
-                CreateFace(chunkX, chunkZ, (Direction)i, cubeScale, cubePos);
+                CreateFace((Direction)i, cubeScale, cubePos);
             }
         }
 
         
     }
 
-    private void CreateFace(int chunk_x, int chunk_z, Direction dir, float faceScale, Vector3 facePos)
+    private void CreateFace(Direction dir, float faceScale, Vector3 facePos)
     {
         _vertices.AddRange(CubeMeshData.FaceVertices(dir, faceScale, facePos));
 
@@ -108,7 +111,7 @@ public class RenderChunk : MonoBehaviour
         _triangles.Add(vCount - 4 + 3);
     }
 
-    private void UpdateMesh(int chunk_x, int chunk_z)
+    private void UpdateMesh()
     {
         _mesh.Clear();
         _mesh.vertices = _vertices.ToArray();

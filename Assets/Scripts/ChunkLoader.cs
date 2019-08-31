@@ -25,6 +25,7 @@ public class ChunkLoader : MonoBehaviour
         {
             GameObject chunk = new GameObject("Chunk " + (posX + offsetX) + " " + (posZ + offsetZ));
             chunk.transform.parent = gameObject.transform;
+            chunk.transform.position = new Vector3((posX + offsetX) * _chunkSize, 0, (posZ + offsetZ) * _chunkSize);
 
             RenderChunk renderChunk = chunk.AddComponent<RenderChunk>();
             renderChunk.Render(posX + offsetX, posZ + offsetZ);
@@ -50,18 +51,16 @@ public class ChunkLoader : MonoBehaviour
             for (int i = 0; i < childCount; i++) {
                 Transform chunk = transform.GetChild(i);
                 
-                if (Vector3.Distance(player.position, chunk.position) <= dist) {
-                    continue;
+                if (Vector3.Distance(player.position, chunk.position) >= dist) {
+                    Destroy(chunk.gameObject);
                 }
-
-                Destroy(chunk.gameObject);
             }
 
             yield return new WaitForSeconds(0.25f);
         }
     }
 
-    private IEnumerator LoadChunks(int dist) {
+    private IEnumerator LoadChunks() {
         while (_checkChunks)
         {
             Vector3 position = _world.Player.transform.position;
@@ -69,14 +68,14 @@ public class ChunkLoader : MonoBehaviour
             int posZ = (int)position.z / _chunkSize;
 
             LoadChunk(posX, posZ, 0, 0);
-            LoadChunk(posX, posZ, dist, 0);
-            LoadChunk(posX, posZ, 0, dist);
-            LoadChunk(posX, posZ, -dist, 0);
-            LoadChunk(posX, posZ, 0, -dist);
-            LoadChunk(posX, posZ, dist, dist);
-            LoadChunk(posX, posZ, -dist, -dist);
-            LoadChunk(posX, posZ, -dist, dist);
-            LoadChunk(posX, posZ, dist, -dist);
+            LoadChunk(posX, posZ, 1, 0);
+            LoadChunk(posX, posZ, 0, 1);
+            LoadChunk(posX, posZ, -1, 0);
+            LoadChunk(posX, posZ, 0, -1);
+            LoadChunk(posX, posZ, 1, 1);
+            LoadChunk(posX, posZ, -1, -1);
+            LoadChunk(posX, posZ, -1, 1);
+            LoadChunk(posX, posZ, 1, -1);
 
             yield return new WaitForSeconds(0.25f);
         }
@@ -86,8 +85,8 @@ public class ChunkLoader : MonoBehaviour
     {
         if (!_started) {
             _started = true;
-            StartCoroutine(LoadChunks(1));
-            //StartCoroutine(UnloadChunks(20));
+            StartCoroutine(LoadChunks());
+            StartCoroutine(UnloadChunks(_chunkSize * 3));
         }
     }
 }

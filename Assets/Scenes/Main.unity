@@ -334,7 +334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff197c3953d4c284db6e199d4af5b046, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UseSceneView: 0
+  UseSceneView: 1
 --- !u!4 &1869269647
 Transform:
   m_ObjectHideFlags: 0
