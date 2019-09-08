@@ -13,3 +13,25 @@ MonoBehaviour:
   m_Name: Shape
   m_EditorClassIdentifier: 
   PlanetRadius: 500
+  NoiseLayers:
+  - Enabled: 1
+    UseFirstLayerAsMask: 0
+    NoiseSettings:
+      TheFilterType: 0
+      TheSimpleNoiseSettings:
+        Strength: 0.91
+        NumLayers: 1
+        BaseRoughness: 4.37
+        Roughness: 2
+        Persistance: 0.5
+        Centre: {x: 0, y: 0, z: 0}
+        MinValue: 0.66
+      TheRigidNoiseSettings:
+        Strength: 1
+        NumLayers: 1
+        BaseRoughness: 1
+        Roughness: 2
+        Persistance: 0.5
+        Centre: {x: 0, y: 0, z: 0}
+        MinValue: 0
+        WeightMultiplier: 0.8

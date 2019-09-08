@@ -1,7 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class Planet : MonoBehaviour
 {
+    public int x, y, z;
+    public int radius;
+
     [Range(0, 1)]
     public int Subdivisions = 0;
     public float TestOffset = 0;
@@ -18,7 +21,8 @@ public class Planet : MonoBehaviour
     [HideInInspector]
     public bool ColourSettingsFoldout;
 
-    private ShapeGenerator _shapeGenerator;
+    private ShapeGenerator _shapeGenerator = new ShapeGenerator();
+    private ColourGenerator _colourGenerator = new ColourGenerator();
 
     [SerializeField, HideInInspector]
     private MeshFilter[,] _meshFilters;
@@ -28,11 +32,32 @@ public class Planet : MonoBehaviour
     private int _subdivisions;
     private int _divisions;
 
+    public void Awake()
+    {
+        GeneratePlanet(new Vector3(x, y, z), radius);
+    }
+
+    public void GeneratePlanet()
+    {
+        Initialize();
+        GenerateMesh();
+        GenerateColours();
+    }
+
+    public void GeneratePlanet(Vector3 loc, int radius)
+    {
+        //ColourSettings.Gradient = 
+        ShapeSettings.PlanetRadius = radius;
+        GeneratePlanet();
+        transform.Translate(loc);
+    }
+
     private void Initialize()
     {
         _divisions = (int) Mathf.Pow(4, Subdivisions);
 
-        _shapeGenerator = new ShapeGenerator(ShapeSettings);
+        _shapeGenerator.UpdateSettings(ShapeSettings);
+        _colourGenerator.UpdateSettings(ColourSettings);
         if (_meshFilters == null || _meshFilters.Length == 0 || _subdivisions != Subdivisions) {
             _meshFilters = new MeshFilter[6, _divisions];
         }
@@ -68,14 +93,15 @@ public class Planet : MonoBehaviour
             GameObject meshObj = new GameObject("Chunk");
             meshObj.transform.parent = transform;
 
-            meshObj.AddComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Standard"));
+            meshObj.AddComponent<MeshRenderer>();
             _meshFilters[d, divisions] = meshObj.AddComponent<MeshFilter>();
             _meshFilters[d, divisions].sharedMesh = new Mesh();
 
             MeshCollider collider = meshObj.AddComponent<MeshCollider>();
             _meshColliders[d, divisions] = collider;
-            collider.convex = true;
+            collider.convex = false;
         }
+        _meshFilters[d, divisions].GetComponent<MeshRenderer>().sharedMaterial = ColourSettings.PlanetMaterial;
 
         // Size of 0.125 has offset of 6.5f, 6.5f
         // Size of 0.25 has offset of 2.5f, 2.5f
@@ -93,13 +119,6 @@ public class Planet : MonoBehaviour
         _terrainFaces[d, divisions] = terrainFace;
 
         GenerateFaces(directions, offsets, d, divisions - 1);
-    }
-
-    public void GeneratePlanet()
-    {
-        Initialize();
-        GenerateMesh();
-        GenerateColours();
     }
 
     public void OnShapeSettingsUpdated()
@@ -126,14 +145,12 @@ public class Planet : MonoBehaviour
         {
             face.ConstructMesh(transform);
         }
+
+        _colourGenerator.UpdateElevation(_shapeGenerator.ElevationMinMax);
     }
 
     private void GenerateColours()
     {
-        foreach (MeshFilter m in _meshFilters)
-        {
-            if (m != null)
-                m.GetComponent<MeshRenderer>().sharedMaterial.color = ColourSettings.PlanetColour;
-        }
+        _colourGenerator.UpdateColours();
     }
 }
