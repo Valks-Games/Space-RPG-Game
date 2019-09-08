@@ -1,4 +1,4 @@
-![Preview](https://i.gyazo.com/a5b91d0ee4a4db779cd4357bf1a4d399.png)
+![Preview](https://i.gyazo.com/779ad37e142bf6fa269e34f462239c26.png)
 
 ## Controls
 
